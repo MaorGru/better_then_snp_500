@@ -2,7 +2,8 @@ from fastapi import HTTPException, status
 from pydantic import BaseModel, Field, field_validator
 import datetime
 
-from app.clients.wikipedia_client import get_sp500_symbols
+from app.clients.wikipedia_client import WikipediaClient
+
 
 class PredictRequest(BaseModel):
     symbol: str = Field(..., description="Ticker symbol, e.g., AAPL")
@@ -11,7 +12,7 @@ class PredictRequest(BaseModel):
     @field_validator("symbol")
     @classmethod
     def validate_symbol(cls, v: str):
-        symbols = get_sp500_symbols()  # cached set
+        symbols = WikipediaClient.get_sp500_symbols()
         if v.upper() not in symbols:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
