@@ -16,5 +16,6 @@ class MarketClient:
             start=ref_date - timedelta(days=days),
             end=ref_date + timedelta(days=1)
         )
+        logger.info("Symbol: %s, DataFrame: %s", symbol, df)
         #TODO: add validation on data
         return df.tail(days)
