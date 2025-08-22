@@ -1,6 +1,7 @@
 import pytest
 from datetime import date
 from unittest.mock import MagicMock
+import pandas as pd
 from app.services.prediction_service import PredictionService
 from app.schemas.prediction_models import PredictionResult, ComparisonResult, ComparisonResultData
 
@@ -14,9 +15,7 @@ def prediction_service(mock_market_client):
 
 # Happy Flow Test: Predict percentage change
 def test_predict_percentage_change_happy_flow(prediction_service, mock_market_client):
-    mock_market_client.get_ticker_history.return_value = {
-        "Close": [100, 102, 104, 106, 108]
-    }
+    mock_market_client.get_ticker_history.return_value = pd.DataFrame({"Close": [100, 102, 104, 106, 108]})
 
     result = prediction_service.predict_percentage_change_moving_average(
         symbol="AAPL",
@@ -31,7 +30,7 @@ def test_predict_percentage_change_happy_flow(prediction_service, mock_market_cl
 
 # Error Test: Missing closing price data
 def test_predict_percentage_change_missing_data(prediction_service, mock_market_client):
-    mock_market_client.get_ticker_history.return_value = {}
+    mock_market_client.get_ticker_history.return_value = pd.DataFrame()
 
     with pytest.raises(ValueError, match="No closing price data available"):
         prediction_service.predict_percentage_change_moving_average(
@@ -43,8 +42,8 @@ def test_predict_percentage_change_missing_data(prediction_service, mock_market_
 # Happy Flow Test: Compare stock with S&P 500
 def test_compare_stock_with_sp500_happy_flow(prediction_service, mock_market_client):
     mock_market_client.get_ticker_history.side_effect = [
-        {"Close": [100, 102, 104, 106, 108]},  # Stock data
-        {"Close": [200, 202, 204, 206, 208]}   # S&P 500 data
+        pd.DataFrame({"Close": [100, 102, 104, 106, 108]}),  # Stock data
+        pd.DataFrame({"Close": [200, 202, 204, 206, 208]})   # S&P 500 data
     ]
 
     result = prediction_service.compare_stock_with_sp500(
@@ -59,8 +58,8 @@ def test_compare_stock_with_sp500_happy_flow(prediction_service, mock_market_cli
 # Error Test: Invalid data from MarketClient
 def test_compare_stock_with_sp500_invalid_data(prediction_service, mock_market_client):
     mock_market_client.get_ticker_history.side_effect = [
-        {},  # Stock data missing
-        {"Close": [200, 202, 204, 206, 208]}   # S&P 500 data
+        pd.DataFrame(),  # Stock data missing
+        pd.DataFrame({"Close": [200, 202, 204, 206, 208]})   # S&P 500 data
     ]
 
     with pytest.raises(ValueError, match="No closing price data available"):

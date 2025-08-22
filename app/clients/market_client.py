@@ -16,6 +16,11 @@ class MarketClient:
             start=ref_date - timedelta(days=days),
             end=ref_date + timedelta(days=1)
         )
+
+        if df.empty:
+            logger.warning("No data for symbol %s between %s and %s",
+                           symbol, ref_date - timedelta(days=days), ref_date)
+            raise Exception(f"Failed to get ticker data on {symbol} for {ref_date} prevoius days:{days}")  
+
         logger.info("Symbol: %s, DataFrame: %s", symbol, df[["Close"]])
-        #TODO: add validation on data
         return df.tail(days)
