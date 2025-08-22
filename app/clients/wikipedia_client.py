@@ -1,6 +1,7 @@
+from operator import attrgetter
 import httpx
 import pandas as pd
-from cachetools import TTLCache
+from cachetools import TTLCache, cachedmethod
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 URL = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
@@ -11,13 +12,9 @@ class WikipediaClient:
     _cache = TTLCache(maxsize=1, ttl=3600)  # 1 hour cache
 
     @classmethod
+    @cachedmethod(cache=attrgetter("_cache"))
     def get_sp500_symbols(cls) -> set[str]:
-        """Return cached symbols or fetch if expired."""
-        if "symbols" in cls._cache:
-            return cls._cache["symbols"]
-        symbols = cls._fetch_symbols()
-        cls._cache["symbols"] = symbols
-        return symbols
+      return cls._fetch_symbols()
 
     @staticmethod
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=1, max=10))
