@@ -1,3 +1,4 @@
+from io import StringIO
 from operator import attrgetter
 import httpx
 import pandas as pd
@@ -22,5 +23,5 @@ class WikipediaClient:
         """Fetch symbols from Wikipedia with retry."""
         resp = httpx.get(URL, timeout=20, headers={"User-Agent": "PredictionService/1.0"})
         resp.raise_for_status()
-        df = pd.read_html(resp.text)[0]
+        df = pd.read_html(StringIO(resp.text))[0]
         return set(df["Symbol"].astype(str).str.upper().str.strip())
