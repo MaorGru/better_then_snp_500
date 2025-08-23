@@ -37,6 +37,7 @@ app/
 3. Install dependencies:
    ```bash
    pip install -r requirements.txt
+   pip install -r requirements-dev.txt
    ```
 
 ## Usage
@@ -44,7 +45,7 @@ app/
 Run the application:
 
 ```bash
-python app/main.py
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ## Testing
