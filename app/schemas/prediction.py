@@ -1,6 +1,7 @@
+import datetime
+
 from fastapi import HTTPException, status
 from pydantic import BaseModel, Field, field_validator
-import datetime
 
 from app.clients.wikipedia_client import WikipediaClient
 
@@ -16,9 +17,10 @@ class PredictRequest(BaseModel):
         if v.upper() not in symbols:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail=f"Symbol '{v}' is not in S&P 500 list"
+                detail=f"Symbol '{v}' is not in S&P 500 list",
             )
         return v.upper()  # normalize
+
 
 class PredictResponse(BaseModel):
     symbol: str

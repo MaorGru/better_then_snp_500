@@ -1,15 +1,19 @@
-from fastapi import FastAPI, Request, HTTPException
+import logging
+
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
-import logging
 
 log = logging.getLogger(__name__)
+
 
 def register_exception_handlers(app: FastAPI):
 
     @app.exception_handler(RequestValidationError)
-    async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    async def validation_exception_handler(
+        request: Request, exc: RequestValidationError
+    ):
         return JSONResponse(
             status_code=422,
             content={"error": "validation_error", "details": exc.errors()},
@@ -27,5 +31,8 @@ def register_exception_handlers(app: FastAPI):
         log.exception("Unhandled error")
         return JSONResponse(
             status_code=500,
-            content={"error": "internal_server_error", "details": "Something went wrong"},
+            content={
+                "error": "internal_server_error",
+                "details": "Something went wrong",
+            },
         )

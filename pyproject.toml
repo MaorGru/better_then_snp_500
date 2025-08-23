@@ -1,0 +1,19 @@
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.autoflake]
+remove-all-unused-imports = true
+remove-unused-variables = true
+expand-star-imports = true
+in-place = true
+recursive = true
+
+[tool.autopep8]
+max_line_length = 88
+aggressive = 2
+

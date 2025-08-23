@@ -19,17 +19,34 @@ LOGGING_CONFIG = {
     },
     "loggers": {
         # Your app loggers
-        "app": {"handlers": ["console"], "level": DEFAULT_LOG_LEVEL, "propagate": False},
+        "app": {
+            "handlers": ["console"],
+            "level": DEFAULT_LOG_LEVEL,
+            "propagate": False,
+        },
         # Make uvicorn/uvicorn.access play nicely with the same handler/format
-        "uvicorn": {"handlers": ["console"], "level": DEFAULT_LOG_LEVEL, "propagate": False},
-        "uvicorn.error": {"handlers": ["console"], "level": DEFAULT_LOG_LEVEL, "propagate": False},
-        "uvicorn.access": {"handlers": ["console"], "level": DEFAULT_LOG_LEVEL, "propagate": False},
+        "uvicorn": {
+            "handlers": ["console"],
+            "level": DEFAULT_LOG_LEVEL,
+            "propagate": False,
+        },
+        "uvicorn.error": {
+            "handlers": ["console"],
+            "level": DEFAULT_LOG_LEVEL,
+            "propagate": False,
+        },
+        "uvicorn.access": {
+            "handlers": ["console"],
+            "level": DEFAULT_LOG_LEVEL,
+            "propagate": False,
+        },
     },
     "root": {  # fallback
         "handlers": ["console"],
         "level": DEFAULT_LOG_LEVEL,
     },
 }
+
 
 def setup_logging(level: str | None = None) -> None:
     if level:
@@ -39,6 +56,7 @@ def setup_logging(level: str | None = None) -> None:
         LOGGING_CONFIG["loggers"]["uvicorn.error"]["level"] = level
         LOGGING_CONFIG["loggers"]["uvicorn.access"]["level"] = level
     logging.config.dictConfig(LOGGING_CONFIG)
+
 
 def get_logger(name: str) -> logging.Logger:
     return logging.getLogger(name)
